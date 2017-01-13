@@ -1,0 +1,4 @@
+Geschwindigkeit Start Ende Initialcontact
+angenehm 106 166 22 
+langsam  145  259 31 
+schnell 57 102 13 
