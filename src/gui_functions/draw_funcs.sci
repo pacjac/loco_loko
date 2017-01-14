@@ -47,12 +47,11 @@ function drawallthesticks()
     plot(data_tmp(:,1), data_tmp(:,2))
 endfunction
 
-function clear_plot()
-    global axes_frame
+function clear_plot(axes)
     index = 1
-    while (index <= size(axes_frame.children, 1))
-        if axes_frame.children(index).type == 'Compound' | axes_frame.children(index).type == 'Legend' then 
-            delete(axes_frame.children(index));
+    while (index <= size(axes.children, 1))
+        if axes.children(index).type == 'Compound' | axes.children(index).type == 'Legend' then 
+            delete(axes.children(index));
             else index = index + 1;
             end
     end
@@ -64,10 +63,12 @@ function plot_forces()
     
     colors = [color("red"), color("blue"), color("green")];
     
+    // Work on main frame
     sca(axes_frame)
-    clear_plot()
+    clear_plot(axes_frame)
     setAxes(gca(), "Messungen", 5, "Kraft [N]", 5);
     axes_frame.title.text = "Kraft beginn und Ende auswählen"
+    
     for i = 1 : size(forces, 1)
         // Work on working frame
         scf(main_handle)
@@ -76,10 +77,11 @@ function plot_forces()
         
         // Plot complete force
         plot2d(force.Fz)
+        
         tmp = int(locate(2))
         begin_plot = tmp(1,1)
         end_plot = tmp(1,2)
-        clear_plot()
+        clear_plot(axes_frame)
         
         
         // Create Plot variables
@@ -100,7 +102,7 @@ function plot_forces()
     
     // Clear working frame
     axes_frame.title.text = ""
-    clear_plot()
+    clear_plot(axes_frame)
     
     // Show results frame
     results_figure.visible = "on";
@@ -112,14 +114,54 @@ function plot_forces()
 endfunction
 
 
-function plot_angle()
-    global toes ankle knee hip shoulder elbow hand neck;
-    global foot leg  thigh  leg_total  upperarm  forearm  arm_total  trunk;
+
+
+function plot_body_axis()
+    global body;
     global axes_frame
     
-    sca(axes_frame)
-    clear_plot()
+    styles = [':r', 'xg', ':b', '--k', '-.m', ':c', '--b']
+
+    sca(axes_results)
+    clear_plot(axes_results)
+    
+    for i = 1 : size(body, 1)
+        
+        body_axis_angle = body(i).trunk.angle * 180 / %pi
+        
+        
+        
+        // Create Plot variables
+        time = linspace(0, 1, length(body_axis_angle))
+        plot(time, body_axis_angle, styles(i))
+        leg(i) = body(i).name
+           
+    end
+    
+    setAxes(axes_results, "Schrittzyklus", 5, "Winkel in Grad", 5)
+     
+    legend(leg)
+   
 endfunction
 
-
-
+function plot_arm_schwung()
+    global body;
+    
+    styles = [':r', 'xg', ':b', '--k', '-.m', ':c', '--b']
+    
+    sca(axes_results)
+    clear_plot(axes_results)
+    
+    for i = 1 : size(body, 1)
+        rel_hand.x = body(i).hand.x - body(i).shoulder.x
+        rel_hand.y = body(i).hand.y - body(i).shoulder.y
+        
+        plot(rel_hand.x, rel_hand.y, styles(i))
+        leg(i) = body(i).name
+    end
+    
+    setAxes(axes_results, "X", 5, "Y", 5)
+     
+    legend(leg)
+    
+endfunction

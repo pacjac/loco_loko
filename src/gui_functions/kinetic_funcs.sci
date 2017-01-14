@@ -1,5 +1,7 @@
 function calc_forces()
-    global voltageToForce scaleDrift forces forcefile
+    global voltageToForce scaleDrift forces 
+    global forcefile // Muss das?
+    
     forcefile = uigetfile(["*.*", "Force files"], cwd + "/../data/Waage/","Select force data",%t)
     
    
@@ -7,7 +9,7 @@ function calc_forces()
         forceRaw = readScaleFile(forcefile(i));
         force_sum = combineChannels(forceRaw, 2.5)
         force_smooth = calculateForces(force_sum, scaleDrift, voltageToForce)
-        forces(i) = force_smooth // this shit doesnt work
+        forces(i) = force_smooth 
         tmp = tokens(forcefile(i), ['/','.'])
         forces(i).name = tmp($ - 1)
     end
@@ -121,7 +123,7 @@ function inverse_kinetic()
         time = linspace(0, 1, timesteps)
         
         sca(axes_frame)
-        clear_plot()
+        clear_plot(axes_frame)
         setAxes(gca(), "Belastungsdauer", 5, "Kraft [N]", 5);
         plot2d(time, [ankle.Fy, knee.Fy, hip.Fy, shoulder.Fy, elbow.Fy],... 
                 style = [color("red"), color("green"), color("blue"), color("orange"), color("purple")])

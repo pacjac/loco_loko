@@ -1,31 +1,3 @@
-function load_conveyorbelt_data()
-    global toes ankle knee hip shoulder elbow hand neck;
-    global foot leg thigh leg_total upperarm forearm arm_total trunk;
-    global imgfiles
-    imgfiles = uigetfile(["*.mdf", "Output from ImageJ"], cwd + "/../data/Laufen/felix/","Select CSV data",%t);
-    
-    [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(imgfiles(1))
-    
-    // Calculate speeds, acceleration, abs speed, abs acc, smoothed speed (double moving mean)n angle and 
-    toes = anal(toes)
-    ankle = anal(ankle)
-    knee = anal(knee)
-    hip = anal(hip)
-    shoulder = anal(shoulder)
-    elbow = anal(elbow)
-    neck = anal(neck)
-     
-    foot = anal(foot)
-    leg = anal(leg)
-    thigh = anal(thigh)
-    leg_total = anal(leg_total)
-    upperarm = anal(upperarm)
-    forearm = anal(forearm)
-    arm_total = anal(arm_total)
-    trunk = anal(trunk)
-  
-endfunction 
-
 function load_image_data()
     global body
     global imgfiles
@@ -43,6 +15,7 @@ function load_image_data()
         hip = anal(hip)
         shoulder = anal(shoulder)
         elbow = anal(elbow)
+        hand = anal(hand)
         neck = anal(neck)
          
         foot = anal(foot)
@@ -60,6 +33,7 @@ function load_image_data()
         body(i).hip = hip
         body(i).shoulder = shoulder
         body(i).elbow = elbow
+        body(i).hand = hand
         body(i).neck = neck
         body(i).foot = foot
         body(i).leg = leg
@@ -73,12 +47,11 @@ function load_image_data()
         tmp = tokens(imgfiles(i), ['/','.'])
         body(i).name = tmp($ - 1)
     end
+    
 endfunction 
     
-function setCurrentBody(body)
-    global toes ankle knee hip shoulder elbow hand neck;
-    global foot leg thigh leg_total upperarm forearm arm_total trunk;
-    
+function [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body)
+        
     toes = body.toes
     ankle = body.ankle
     knee = body.knee
@@ -91,11 +64,72 @@ function setCurrentBody(body)
     thigh = body.thigh
     leg_total = body.leg_total
     upperarm = body.upperarm
-    forerarm = body.forearm
+    forearm = body.forearm
     arm_total = body.forearm
     trunk = body.trunk
     
 endfunction
+
+
+
+function calc_pendulum()
+    global savedir
+    global body
+    
+    idealpendulum = []
+    cycleTime = []
+    frequency = []
+    difference = []
+    
+    for i = 1 : size(body, 1)
+        
+        [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body(i))
+    
+        timesteps = size(ankle.x, 1)
+        
+        Cycle_T = timesteps * DELTA_T
+        Pendulum_T = 2 * PI * sqrt(mean(GetLimbLength(leg_total, hip)) / 9.81)
+    
+        idealpendulum(i) = Pendulum_T
+        cycleTime(i) = Cycle_T
+        frequency(i) = 1 / Cycle_T
+        difference(i) = Pendulum_T / Cycle_T * 100 - 100
+    end
+    
+    fprintfMat(savedir + "/pendulum.txt",...
+           [idealpendulum, cycleTime, frequency, difference],...
+           "%5.2f",...
+           "Idealpendel_T Beinpendel_T Beinpendel_f rel_diff");
+
+endfunction
+
+function load_conveyorbelt_data()
+    global toes ankle knee hip shoulder elbow hand neck;
+    global foot leg thigh leg_total upperarm forearm arm_total trunk;
+    global imgfiles
+    imgfiles = uigetfile(["*.mdf", "Output from ImageJ"], cwd + "/../data/Laufen/felix/","Select CSV data",%t);
+    
+    [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(imgfiles(1))
+    
+    // Calculate speeds, acceleration, abs speed, abs acc, smoothed speed (double moving mean)n angle and 
+    toes = anal(toes)
+    ankle = anal(ankle)
+    knee = anal(knee)
+    hip = anal(hip)
+    shoulder = anal(shoulder)
+    elbow = anal(elbow)
+    neck = anal(neck)
+    
+    foot = anal(foot)
+    leg = anal(leg)
+    thigh = anal(thigh)
+    leg_total = anal(leg_total)
+    upperarm = anal(upperarm)
+    forearm = anal(forearm)
+    arm_total = anal(arm_total)
+    trunk = anal(trunk)
+    
+endfunction 
 
 function analzye_images()
     global toes ankle knee hip shoulder elbow hand neck;

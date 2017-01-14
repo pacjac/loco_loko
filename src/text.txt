@@ -1,0 +1,4 @@
+// Winkel vergleichen mit Pendel
+// Oberkörper Winkel berechnen, vortreibende Kraft berechnen?
+// Inverse Dynamik: Kräfte und Momente eines Gelenkes über Schrittzyklus
+//                  Kraftpeaks!

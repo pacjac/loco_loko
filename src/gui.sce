@@ -67,7 +67,7 @@ results_figure.axes_size = [axes_w axes_h]
 results_figure.background      = -2;
 results_figure.figure_position = [100 100];
 results_figure.figure_name     = gettext("Ergebnisbild");
-results_figure.visible        = "off";
+results_figure.visible        = "on";
 
 axes_results = newaxes(results_figure);
 axes_results.axes_bounds = [0, 0, 1, 1]
@@ -111,16 +111,21 @@ kinematik_handle = uimenu(main_handle,...
     "label"                 ,gettext("Kinematik"));    
 imgseq_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Bildsequenz laden"),...
-    "callback"              ,"load_conveyorbelt_data()");
-analyze_handle = uimenu(kinematik_handle,...
-    "label"                 ,gettext("Bilder analysieren"),...
-    "callback"              ,"analzye_images()");
+    "callback"              ,"load_image_data()");
 pendulum_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Pendel berechnen"),...
     "callback"              ,"calc_pendulum()");  
 stickfig_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Stickplot"),...
-    "callback"              ,"drawallthesticks()");   
+    "callback"              ,"drawallthesticks()");  
+body_axis_handle = uimenu(kinematik_handle,...
+    "label"                 ,gettext("Körperachse plotten"),...
+    "callback"              ,"plot_body_axis()");  
+arm_swing_handle = uimenu(kinematik_handle,...
+    "label"                 ,gettext("Körperachse plotten"),...
+    "callback"              ,"plot_arm_schwung()");  
+    
+    
     
 // KINETIC MENU
 // ================     
@@ -157,37 +162,7 @@ mass_entry = uicontrol(main_handle,...
 
 
 
-function calc_pendulum()
-    global savedir
-    global imgfiles
-    
-    idealpendulum = []
-    cycleTime = []
-    frequency = []
-    difference = []
-    
-    for i = 1 : size(imgfiles, 1)
-        
-        [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(imgfiles(i))
-        [foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = createLimbs(toes, ankle, knee, hip, shoulder, elbow, hand, neck)
-    
-        timesteps = size(ankle.x, 1)
-        
-        Cycle_T = timesteps * DELTA_T
-        Pendulum_T = 2 * PI * sqrt(mean(GetLimbLength(leg_total, hip)) / 9.81)
-    
-        idealpendulum(i) = Pendulum_T
-        cycleTime(i) = Cycle_T
-        frequency(i) = 1 / Cycle_T
-        difference(i) = Pendulum_T / Cycle_T * 100 - 100
-    end
-    
-    fprintfMat(savedir + "/pendulum.txt",...
-           [idealpendulum, cycleTime, frequency, difference],...
-           "%5.2f",...
-           "Idealpendel_T Beinpendel_T Beinpendel_f rel_diff");
 
-endfunction
 
 function plot_force_comparison()
     
