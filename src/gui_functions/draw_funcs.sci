@@ -5,6 +5,16 @@ function setAxes(axes, xLabel, xFontSize, yLabel, yFontSize)
     axes.y_label.font_size = yFontSize; 
 endfunction
 
+function clear_plot(axes)
+    index = 1
+    while (index <= size(axes.children, 1))
+        if axes.children(index).type == 'Compound' | axes.children(index).type == 'Legend' then 
+            delete(axes.children(index));
+            else index = index + 1;
+            end
+    end
+endfunction
+
 function drawallthesticks()
     global toes ankle knee hip shoulder elbow hand neck;
     scf(1);//clf();
@@ -47,19 +57,12 @@ function drawallthesticks()
     plot(data_tmp(:,1), data_tmp(:,2))
 endfunction
 
-function clear_plot(axes)
-    index = 1
-    while (index <= size(axes.children, 1))
-        if axes.children(index).type == 'Compound' | axes.children(index).type == 'Legend' then 
-            delete(axes.children(index));
-            else index = index + 1;
-            end
-    end
-endfunction
-
 
 function plot_forces()
-    global forces axes_frame forcefile
+    // figures to work with
+    global results_figure axes_frame;
+    // data to work with 
+    global forces;
     
     colors = [color("red"), color("blue"), color("green")];
     
@@ -118,7 +121,7 @@ endfunction
 
 function plot_body_axis()
     global body;
-    global axes_frame
+    global axes_frame results_figure axes_results;
     
     styles = [':r', 'xg', ':b', '--k', '-.m', ':c', '--b']
 
@@ -141,11 +144,14 @@ function plot_body_axis()
     setAxes(axes_results, "Schrittzyklus", 5, "Winkel in Grad", 5)
      
     legend(leg)
+    
+    results_figure.visible = "on"
    
 endfunction
 
 function plot_arm_schwung()
     global body;
+    global axes_frame results_figure axes_results;
     
     styles = [':r', 'xg', ':b', '--k', '-.m', ':c', '--b']
     
@@ -160,8 +166,12 @@ function plot_arm_schwung()
         leg(i) = body(i).name
     end
     
+    
     setAxes(axes_results, "X", 5, "Y", 5)
      
     legend(leg)
     
+    results_figure.visible = "on"
 endfunction
+
+

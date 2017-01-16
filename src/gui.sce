@@ -6,11 +6,12 @@ global margin_x margin_y;
 global frame_w frame_h plot_w plot_h;
 
 // Global data
-global img_data
-global toes ankle knee hip shoulder elbow hand neck;
-global foot leg  thigh  leg_total  upperarm  forearm  arm_total  trunk;
+//global img_data
+//global toes ankle knee hip shoulder elbow hand neck;
+//global foot leg  thigh  leg_total  upperarm  forearm  arm_total  trunk;
 global forces body;
-global proband_mass DELTA_T g;
+global proband_mass;
+global DELTA_T g;
 DELTA_T = 0.02; g = -9.81
 
 // Global calibration
@@ -18,11 +19,11 @@ global voltageToForce scaleDrift;
 
 // Global image handle
 global axes_frame;
+global results_fig;
 
 // Global files
 global savedir caldir;
 global forcefile imgfiles;
-global cwd;
 
 cwd = get_absolute_file_path('gui.sce')
 getd(cwd + "/base_functions");
@@ -49,25 +50,25 @@ main_handle = scf(100001);// Create window with id=100001 and make it the curren
 main_handle.background      = -2;
 main_handle.figure_position = [100 100];
 main_handle.figure_name     = gettext("Lokomotion Auswertung");
+main_handle.tag             = "main";
 win_size = main_handle.figure_size;
 
 axes_frame = newaxes(main_handle);
 axes_frame.axes_bounds  = [0.2,0,0.8,1];
-//axes_frame.axes_visible = ["off","off","off"];
 axes_frame.tight_limits = "on";
 axes_frame.auto_scale = "on";
 axes_frame.Visible      = "on";
-title("Video Sequence");
-//Matplot(256);
-//axes_frame.children(1).user_data = 'image';
+title("Working frame");
+
 
 results_figure = scf(999)
+
 // Change dimensions of the figure
-results_figure.axes_size = [axes_w axes_h]
-results_figure.background      = -2;
-results_figure.figure_position = [100 100];
-results_figure.figure_name     = gettext("Ergebnisbild");
-results_figure.visible        = "on";
+results_figure.axes_size        = [axes_w axes_h]
+results_figure.background       = -2;
+results_figure.figure_position  = [100 100];
+results_figure.figure_name      = gettext("Ergebnisbild");
+results_figure.visible          = "off";
 
 axes_results = newaxes(results_figure);
 axes_results.axes_bounds = [0, 0, 1, 1]
@@ -90,7 +91,19 @@ file_handle = uimenu(main_handle,...
         
 resultdir_handle = uimenu(file_handle,...
     "label"                 ,gettext("Ergebnisordner setzen"),...
-    "callback"              ,"set_result_dir()");
+    "callback"              ,"set_result_dir(cwd)");
+    
+save_handle = uimenu(file_handle,...
+    "label"                 ,gettext("Session speichern"),...
+    "callback"              ,"savesession()");
+    
+load_handle = uimenu(file_handle,...
+    "label"                 ,gettext("Session laden"),...
+    "callback"              ,"loadsession()");
+    
+cleardata_handle = uimenu(file_handle,...
+    "label"                 ,gettext("Bild und Kraftdaten löschen"),...
+    "callback"              ,"clearData()");
 
 // CALIBRATION MENU
 // ================
@@ -122,7 +135,7 @@ body_axis_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Körperachse plotten"),...
     "callback"              ,"plot_body_axis()");  
 arm_swing_handle = uimenu(kinematik_handle,...
-    "label"                 ,gettext("Körperachse plotten"),...
+    "label"                 ,gettext("Armbewegung plotten"),...
     "callback"              ,"plot_arm_schwung()");  
     
     
@@ -138,28 +151,63 @@ plot_handle = uimenu(kinetik_handle,...
     "label"                 ,gettext("Kräfte plotten"),...
     "callback"              ,"plot_forces()");
     
-inversekin_handle = uimenu(kinetik_handle,...
-    "label"                 ,gettext("Inverse Kinetik"),...
+inversedyn_handle = uimenu(kinetik_handle,...
+    "label"                 ,gettext("Inverse Dynamik"));
+    
+calc_dynamic_handle = uimenu(inversedyn_handle,...
+    "label"                 ,gettext("Kräfte berechnen"),...
     "callback"              ,"inverse_kinetic()");
+    
+plot_dynamic_handle = uimenu(inversedyn_handle,...
+    "label"                 ,gettext("Kräfte in Gelenk berechnen"),...
+    "callback"              ,"plot_forces_limb(plot_entry.string)");
     
     
     
 // BUTTONS
 // ================     
 mass_text = uicontrol(main_handle,...
-    "style"                  ,"pushbutton",...
+    "style"                  ,"text",...
     "string"                  ,gettext("Proband mass"),...
-    "position"              ,[40,50,100,20],...
-    "callback"              ,"getProbandMass()");
+    "position"              ,[20,50,100,20]);
     
 mass_entry = uicontrol(main_handle,...
     "style"                  ,"edit",...
     "string"                ,"85",...
-    "position"              ,[160, 50, 50, 20]);
+    "position"              ,[140, 50, 50, 20]);
+    
+save_button = uicontrol(main_handle,...
+    "style"                  ,"pushbutton",...
+    "string"                  ,gettext("Save figure"),...
+    "position"              ,[20, 400, 70, 20],...
+    "callback"              ,"save_result_fig()");
+    
+save_entry = uicontrol(main_handle,...
+    "style"                  ,"edit",...
+    "string"                ,"figure_name",...
+    "position"              ,[110, 400, 90, 20]);
+    
+plot_text = uicontrol(main_handle,...
+    "style"                  ,"text",...
+    "string"                  ,gettext("Enter joint"),...
+    "position"              ,[20, 360, 120, 20]);
+    
+plot_entry = uicontrol(main_handle,...
+    "style"                  ,"edit",...
+    "string"                ,"joint_name",...
+    "position"              ,[110, 360, 90, 20]);
     
 
 
 
+
+function save_result_fig()
+    global results_figure savedir;
+    name = save_entry.string
+    savestring = savedir + "/" + name + ".pdf"
+    figure_id = results_figure.figure_id
+    xs2pdf(figure_id, savestring)
+endfunction
 
 
 
@@ -168,7 +216,51 @@ function plot_force_comparison()
     
 endfunction
 
-function set_result_dir()
+function set_result_dir(cwd)
     global savedir cwd;
     savedir = uigetdir(cwd + "../results/")
 endfunction 
+
+function getProbandMass()
+    global proband_mass
+    proband_mass = strtod(mass_entry.string)
+endfunction
+
+function plot_forces_limb(limb_name)
+    global body forces;
+    global results_figure;
+    
+    styles = [-1, -2, -3]
+    
+    sca(axes_results)
+    clear_plot(axes_results)
+    
+    
+    execstr("limb = body(1)." + limb_name)        
+    time = linspace(0, 1, length(limb.Fx))
+    plot2d(time, [limb.Fx, limb.Fy, limb.M], styles)
+    name = body(1).name + " " + limb_name
+    legend(name + " Fx", name + " Fy", name + " M")
+        
+    
+    
+    results_figure.visible = "on";
+endfunction
+
+function savesession()
+    global forces body voltageToForce scaleDrift proband_mass;
+    global cwd
+    save(cwd + 'session.sod', 'forces', 'body', 'voltageToForce', 'scaleDrift', 'proband_mass')
+endfunction
+
+function loadsession()
+    global forces body voltageToForce scaleDrift proband_mass;
+    global cwd
+    load(cwd + 'session.sod', 'forces', 'body', 'voltageToForce', 'scaleDrift', 'proband_mass')
+endfunction
+
+function clearData()
+    global body forces ;
+    body = [];
+    forces = [];
+endfunction

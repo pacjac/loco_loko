@@ -26,13 +26,15 @@ endfunction
 
 function inverse_kinetic()
     
-    global toes ankle knee hip shoulder elbow hand neck;
-    global foot leg  thigh  leg_total  upperarm  forearm  arm_total  trunk;
+    global body
     global forces
     global g
     global axes_frame
     
+    
     for i = 1 : size(forces, 1)
+        
+        [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body(i))
     
         grfBalance = forces(i)
         // Determine initial Contact from force Data
@@ -91,29 +93,41 @@ function inverse_kinetic()
         hip.y = hip.y(initialContact : liftOff)
         
         // Iterate over ground contact duration
-        for i = 1 : contactLength
-            grf.Fx(i) = - grf.Fx(i)
+        for j = 1 : contactLength
+            grf.Fx(j) = - grf.Fx(j)
             
             // Kräfte beim Einlesen umschreiben um Koordinatensystem anzupassen!
             
             // Calculate Joint forces and moments
-            ankle.Fx(i) = foot.mass * foot.acc.x(i) - grf.Fx(i)
-            ankle.Fy(i) = foot.mass * (foot.acc.y(i) + g) + grf.Fy(i)
-            ankle.M(i) = foot.MoI * foot.angacc(i) - ankle.Fy(i) * (ankle.x(i) - foot.x(i)) ...
-                      - ankle.Fx(i) * (foot.y(i) - ankle.y(i)) - grf.Fx(i) * ( foot.y(i) - grf.y ) - grf.Fy(i) * (grf.x(i) - foot.x(i))
+            ankle.Fx(j) = foot.mass * foot.acc.x(j) - grf.Fx(j)
+            ankle.Fy(j) = foot.mass * (foot.acc.y(j) + g) + grf.Fy(j)
+            ankle.M(j) = foot.MoI * foot.angacc(j) - ankle.Fy(j) * (ankle.x(j) - foot.x(j)) ...
+                      - ankle.Fx(j) * (foot.y(j) - ankle.y(j)) - grf.Fx(j) * ( foot.y(j) - grf.y ) - grf.Fy(j) * (grf.x(j) - foot.x(j))
                       
-            //knee.Fx(i) = leg.mass * leg.acc.x(i) - ankle.Fx(i) * (-1)
-            knee.Fx(i) = leg.mass * leg.acc.x(i) - ankle.Fx(i) * (-1)
-            knee.Fy(i) = leg.mass * (leg.acc.y(i) + g) + ankle.Fy(i)
-            knee.M(i) = ankle.M(i) + leg.MoI * leg.angacc(i) - knee.Fy(i) * (knee.x(i) - leg.x(i))...
-                     - knee.Fx(i) * (leg.y(i) - knee.y(i)) + ankle.Fx(i) * (leg.y(i) - ankle.y(i)) + ankle.Fy(i) * (ankle.x(i) - leg.y(i))
+            //knee.Fx(j) = leg.mass * leg.acc.x(j) - ankle.Fx(j) * (-1)
+            knee.Fx(j) = leg.mass * leg.acc.x(j) - ankle.Fx(j) * (-1)
+            knee.Fy(j) = leg.mass * (leg.acc.y(j) + g) + ankle.Fy(j)
+            knee.M(j) = ankle.M(j) + leg.MoI * leg.angacc(j) - knee.Fy(j) * (knee.x(j) - leg.x(j))...
+                     - knee.Fx(j) * (leg.y(j) - knee.y(j)) + ankle.Fx(j) * (leg.y(j) - ankle.y(j)) + ankle.Fy(j) * (ankle.x(j) - leg.y(j))
                      
-            hip.Fx(i) = thigh.mass * thigh.acc.x(i) + knee.Fx(i)
-            hip.Fy(i) = thigh.mass * (thigh.acc.y(i) + g) + knee.Fy(i)
-            hip.M(i) = knee.M(i) + thigh.MoI * thigh.angacc(i) - hip.Fy(i) * (hip.x(i) - thigh.x(i))...
-                     - hip.Fx(i) * (thigh.y(i) - hip.y(i)) + knee.Fx(i) * (thigh.y(i) - knee.y(i)) + knee.Fy(i) * (knee.x(i) - thigh.y(i))
+            hip.Fx(j) = thigh.mass * thigh.acc.x(j) + knee.Fx(j)
+            hip.Fy(j) = thigh.mass * (thigh.acc.y(j) + g) + knee.Fy(j)
+            hip.M(j) = knee.M(j) + thigh.MoI * thigh.angacc(j) - hip.Fy(j) * (hip.x(j) - thigh.x(j))...
+                     - hip.Fx(j) * (thigh.y(j) - hip.y(j)) + knee.Fx(j) * (thigh.y(j) - knee.y(j)) + knee.Fy(j) * (knee.x(j) - thigh.y(j))
                  
          end
+         
+         body(i).ankle.Fx = ankle.Fx
+         body(i).ankle.Fy = ankle.Fy
+         body(i).ankle.M = ankle.M
+         
+         body(i).knee.Fx = knee.Fx
+         body(i).knee.Fy = knee.Fy
+         body(i).knee.M = knee.M
+         
+         body(i).hip.Fx = hip.Fx
+         body(i).hip.Fy = hip.Fy
+         body(i).hip.M = hip.M
                  
 //        force_window.visible = "on"
         
@@ -122,11 +136,14 @@ function inverse_kinetic()
         timesteps = contactLength
         time = linspace(0, 1, timesteps)
         
-        sca(axes_frame)
-        clear_plot(axes_frame)
+        sca(axes_results)
+        clear_plot(axes_results)
+        
         setAxes(gca(), "Belastungsdauer", 5, "Kraft [N]", 5);
-        plot2d(time, [ankle.Fy, knee.Fy, hip.Fy, shoulder.Fy, elbow.Fy],... 
-                style = [color("red"), color("green"), color("blue"), color("orange"), color("purple")])
-        legend("Knöchel", "Knie", "Hüfte", "Schulter", "Ellenbogen")
+        plot2d(time, [ankle.Fy, knee.Fy, hip.Fy],... 
+                style = [color("red"), color("green"), color("blue")])
+        legend("Knöchel", "Knie", "Hüfte")
+        
+        results_figure.visible = "on"
     end
 endfunction
