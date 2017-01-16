@@ -124,7 +124,7 @@ kinematik_handle = uimenu(main_handle,...
     "label"                 ,gettext("Kinematik"));    
 imgseq_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Bildsequenz laden"),...
-    "callback"              ,"load_image_data()");
+    "callback"              ,"load_image_data(strtod(conversion_value.string))");
 pendulum_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Pendel berechnen"),...
     "callback"              ,"calc_pendulum()");  
@@ -166,6 +166,8 @@ plot_dynamic_handle = uimenu(inversedyn_handle,...
     
 // BUTTONS
 // ================     
+
+// PROBAND MASS
 mass_text = uicontrol(main_handle,...
     "style"                  ,"text",...
     "string"                  ,gettext("Proband mass"),...
@@ -176,6 +178,7 @@ mass_entry = uicontrol(main_handle,...
     "string"                ,"85",...
     "position"              ,[140, 50, 50, 20]);
     
+// SAVE FIGURE
 save_button = uicontrol(main_handle,...
     "style"                  ,"pushbutton",...
     "string"                  ,gettext("Save figure"),...
@@ -187,6 +190,7 @@ save_entry = uicontrol(main_handle,...
     "string"                ,"figure_name",...
     "position"              ,[110, 400, 90, 20]);
     
+// PLOT CONTROL
 plot_text = uicontrol(main_handle,...
     "style"                  ,"text",...
     "string"                  ,gettext("Enter joint"),...
@@ -196,7 +200,46 @@ plot_entry = uicontrol(main_handle,...
     "style"                  ,"edit",...
     "string"                ,"joint_name",...
     "position"              ,[110, 360, 90, 20]);
+// Calibration 
+conversion_text = uicontrol(main_handle,...
+    "style"                  ,"text",...
+    "string"                  ,gettext("pix / m"),...
+    "position"              ,[20, 320, 120, 20]);
     
+conversion_value = uicontrol(main_handle,...
+    "style"                  ,"edit",...
+    "string"                ,"227",...
+    "position"              ,[110, 320, 90, 20]);
+   
+// HEEL ANGLE
+rescale_button = uicontrol(main_handle,...
+    "style"                  ,"pushbutton",...
+    "string"                  ,gettext("Rescale plots"),...
+    "position"              ,[20, 280, 120, 20],...
+    "callback"              ,"scalePlotAxes(gca())");   
+   
+    
+//// HEEL DISTANCE
+//heel_length_text = uicontrol(main_handle,...
+//    "style"                  ,"text",...
+//    "string"                  ,gettext("foot base in m"),...
+//    "position"              ,[20, 320, 120, 20]);
+//    
+//heel_distance = uicontrol(main_handle,...
+//    "style"                  ,"edit",...
+//    "string"                ,"0.2",...
+//    "position"              ,[110, 320, 90, 20]);
+//    
+//// HEEL ANGLE
+//heel_angle_text = uicontrol(main_handle,...
+//    "style"                  ,"text",...
+//    "string"                  ,gettext("heel angle"),...
+//    "position"              ,[20, 280, 120, 20]);
+//    
+//heel_angle = uicontrol(main_handle,...
+//    "style"                  ,"edit",...
+//    "string"                ,"15",...
+//    "position"              ,[110, 280, 90, 20]);
 
 
 
@@ -238,29 +281,48 @@ function plot_forces_limb(limb_name)
     
     execstr("limb = body(1)." + limb_name)        
     time = linspace(0, 1, length(limb.Fx))
-    plot2d(time, [limb.Fx, limb.Fy, limb.M], styles)
+    plot(time, limb.Fx, 'r')
+    plot(time , limb.Fy, 'b')
+    plot(time, limb.M, 'g')
     name = body(1).name + " " + limb_name
     legend(name + " Fx", name + " Fy", name + " M")
         
-    
-    
     results_figure.visible = "on";
 endfunction
 
-function savesession()
-    global forces body voltageToForce scaleDrift proband_mass;
-    global cwd
-    save(cwd + 'session.sod', 'forces', 'body', 'voltageToForce', 'scaleDrift', 'proband_mass')
+
+
+
+
+function [dutyFactor, contactDuration, cycleDuration] = calcDutyFactor(body, tolerance)
+    ankle = body.ankle
+    toes = body.toes
+    
+    threshold_ankle = min(ankle.y) + tolerance;
+    threshold_toes = min(toes.y) + tolerance;
+    
+    all_img = size(ankle.y, 1)
+    
+    initialContactFound = %f
+    liftOffFound = %f
+    initialContact = 0
+    liftOff = 0
+    for i = 1 : all_img
+        if ankle.y(i) < threshold_ankle & initialContactFound == %f then
+            initialContact = i
+            initialContactFound = %t
+        elseif toes.y(i) > threshold_toes & initialContactFound == %t & liftOffFound == %f then
+            liftOff = i
+            liftOffFound = %t
+        elseif ankle.y(i) < threshold_ankle & initialContactFound == %t & liftOffFound == %t then
+            nextContact = i
+        end
+    end
+    
+    contactDuration = liftOff - initialContact;
+    cycleDuration = nextContact -initialContact
+    
+    dutyFactor = contactDuration / cycleDuration
 endfunction
 
-function loadsession()
-    global forces body voltageToForce scaleDrift proband_mass;
-    global cwd
-    load(cwd + 'session.sod', 'forces', 'body', 'voltageToForce', 'scaleDrift', 'proband_mass')
-endfunction
-
-function clearData()
-    global body forces ;
-    body = [];
-    forces = [];
-endfunction
+calcDutyFactor(body(1), 0.02)

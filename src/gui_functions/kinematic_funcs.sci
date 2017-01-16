@@ -1,4 +1,4 @@
-function load_image_data()
+function load_image_data(pix_to_m)
     // Set result global
     global body
     
@@ -9,8 +9,11 @@ function load_image_data()
         // Read mass data from field
         getProbandMass();
     
-        [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(imgfiles(i))
+        [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(imgfiles(i), pix_to_m)
+        
         [foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = createLimbs(toes, ankle, knee, hip, shoulder, elbow, hand, neck)
+        
+//        heel = calcHeel(foot, toes, strtod(heel_distance.string), strtod(heel_angle.string))
         
         // Calculate speeds, acceleration, abs speed, abs acc, smoothed speed (double moving mean)n angle and 
         toes = anal(toes)
@@ -31,25 +34,28 @@ function load_image_data()
         arm_total = anal(arm_total)
         trunk = anal(trunk)
         
-        body(i).toes = toes
-        body(i).ankle = ankle
-        body(i).knee = knee
-        body(i).hip = hip
-        body(i).shoulder = shoulder
-        body(i).elbow = elbow
-        body(i).hand = hand
-        body(i).neck = neck
-        body(i).foot = foot
-        body(i).leg = leg
-        body(i).thigh = thigh
-        body(i).leg_total = leg_total
-        body(i).upperarm = upperarm
-        body(i).forearm = forearm
-        body(i).arm_total = arm_total
-        body(i).trunk = trunk
+        index = size(body, 1) + 1
+        
+        body(index).toes = toes
+        body(index).ankle = ankle
+        body(index).knee = knee
+        body(index).hip = hip
+        body(index).shoulder = shoulder
+        body(index).elbow = elbow
+        body(index).hand = hand
+        body(index).neck = neck
+        
+        body(index).foot = foot
+        body(index).leg = leg
+        body(index).thigh = thigh
+        body(index).leg_total = leg_total
+        body(index).upperarm = upperarm
+        body(index).forearm = forearm
+        body(index).arm_total = arm_total
+        body(index).trunk = trunk
         
         tmp = tokens(imgfiles(i), ['/','.'])
-        body(i).name = tmp($ - 1)
+        body(index).name = tmp($ - 1)
     end
     
 endfunction 

@@ -5,6 +5,30 @@ function setAxes(axes, xLabel, xFontSize, yLabel, yFontSize)
     axes.y_label.font_size = yFontSize; 
 endfunction
 
+function scalePlotAxes(axes)
+    j = 1 
+    for i = 1 : size(axes.children, 1)
+        if axes.children(i).type == 'Compound' then
+            data = axes.children(i).children.data
+            all_xmin(j) = min(data(:,1));
+            all_xmax(j) = max(data(:,1));
+            all_ymin(j) = min(data(:,2));
+            all_ymax(j) = max(data(:,2));
+            j = j + 1;
+        end
+    end
+    xmin = min(all_xmin)
+    xmax = max(all_xmax)
+    ymin = min(all_ymin)
+    ymax = max(all_ymax)
+    axes.data_bounds = [xmin, ymin; xmax, ymax]
+endfunction
+
+function rescaleplots()
+    scalePlotAxes(axes_frame)
+    scalePlotAxes(results_frame)
+endfunction
+
 function clear_plot(axes)
     index = 1
     while (index <= size(axes.children, 1))
@@ -15,46 +39,40 @@ function clear_plot(axes)
     end
 endfunction
 
-function drawallthesticks()
-    global toes ankle knee hip shoulder elbow hand neck;
-    scf(1);//clf();
+function drawallthesticks(speed)
+    global axes_results results_figure
     
-    offset = - 0.2
+    sca(axes_results);
+    clear_plot(axes_results);
     
-    data_tmp = [...
-        toes.x(1), toes.y(1);...
-        ankle.x(1), ankle.y(1);...
-        knee.x(1), knee.y(1);...
-        hip.x(1), hip.y(1);...
-        neck.x(1), neck.y(1);...
-        shoulder.x(1), shoulder.y(1);...
-        elbow.x(1), elbow.y(1);...
-        hand.x(1), hand.y(1)];
-        
-    plot(data_tmp(:,1), data_tmp(:,2))
-    e = gce();
-    h_stick = e.children;
+    // Calculate offset for Conveyor belt
+    offset = speed / 3.6 * 0.02;
     
-    a = gca();
-    a.data_bounds=[1,0;3,2];
+    [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body(1))
+
+    num_of_images = size(toes.x,1)
+    snapshots = 20
+    inkrement = floor(num_of_images / snapshots)
     
-    for i = 1 : 2 : size(toes.x,1)
-        data_tmp = [...
+    for i = 1 : inkrement : num_of_images
+        data_tmp1 = [...
         toes.x(i) + offset * i, toes.y(i);...
         ankle.x(i) + offset * i, ankle.y(i);...
         knee.x(i) + offset* i, knee.y(i);...
         hip.x(i) + offset* i, hip.y(i);...
-        neck.x(i) + offset * i, neck.y(i);...
+        neck.x(i) + offset * i, neck.y(i)];
+        
+        data_tmp2 = [...
         shoulder.x(i) + offset* i, shoulder.y(i);...
         elbow.x(i) + offset* i, elbow.y(i);...
         hand.x(i) + offset * i, hand.y(i)];
         
-        
-        //h_stick.data = data_tmp;
-        sleep(100);
+        plot(data_tmp1(:,1), data_tmp1(:,2), 'b')
+        plot(data_tmp2(:,1), data_tmp2(:,2), 'r')
         
     end
-    plot(data_tmp(:,1), data_tmp(:,2))
+    
+    results_figure.visible = "on"
 endfunction
 
 
@@ -173,5 +191,6 @@ function plot_arm_schwung()
     
     results_figure.visible = "on"
 endfunction
+
 
 

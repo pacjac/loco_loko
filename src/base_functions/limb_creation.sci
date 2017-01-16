@@ -4,7 +4,7 @@
 
 // Öffnendialog starten
 
-function [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(path)
+function [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(path, pix_to_m)
 
 // Einlesen der Daten
 delimiter = " ";                                // Ist klar
@@ -16,7 +16,7 @@ data = csvRead(path, delimiter, [], [], [], regex_ignore, [], header);
 numberOfTracks = size(data,1) / max(data(:, 2))           // Number of Tracks
 numberOfImages = max(data(:, 2))                          // Number of Images per Track
 DELTA_T = 0.02;                                 // 50 FPS
-CALIBRATION = 227; // 300;                              // Pix per m is correct, get the cal ratio from user via dialog box
+CALIBRATION = pix_to_m; // 300;                              // Pix per m is correct, get the cal ratio from user via dialog box
 Y_RESOLUTION = 479; //576 / 300;                             // Höhe in Pixeln  576!!! 479 bei FElix
 
 // Kalibrieren
@@ -59,11 +59,14 @@ end
 
 endfunction
 
-function calcHeel(distance, alpha)
-    ang_gamma = 90 - alpha;
-    span_distance = mean(GetLimbLength(ankle, toes));
-    h = sin(ang_gamma) * span_distance;
-    
+function [heel] = calcHeel(foot, toes, distance, angle_in_degree)
+    // Calculate angle in radians
+    alpha = angle_in_degree * %pi / 180
+    // Calc angle of heel in image coordinate system
+    heel_angle = foot.angle - alpha 
+    // Calc Heel position
+    heel.x = cos(heel_angle) * distance + toes.x
+    heel.y = sin(heel_angle) * distance + toes.y
 endfunction
 
 

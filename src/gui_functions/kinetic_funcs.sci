@@ -30,6 +30,7 @@ function inverse_kinetic()
     global forces
     global g
     global axes_frame
+    global results_figure
     
     
     for i = 1 : size(forces, 1)
@@ -39,6 +40,8 @@ function inverse_kinetic()
         grfBalance = forces(i)
         // Determine initial Contact from force Data
         force_window = scf(100)
+        
+        messagebox(["Synchronisation:" "Klicke auf den Fuß" "des ersten Kraftpeaks"])
         plot2d(grfBalance.Fz)
         forceStart = locate(1)
         startBalance = int(forceStart(1))
@@ -46,8 +49,15 @@ function inverse_kinetic()
         // Determine initial Contact from Kinematic Data
         delete(gca())
         plot2d(ankle.y)
+        messagebox(["Synchronisation:" "Klicke auf initialen minimalen" "y-Wert der Hacke"])
         startContact = locate(1)
-        initialContact = int(startContact(1))
+        initialContact = floor(startContact(1))
+        
+        delete(gca())
+        plot2d(toes.y)
+        messagebox(["Synchronisation:" "Klicke auf letzten minimalen" "y-Wert der Zehen"])
+        tmp = locate(1)
+        liftOff = ceil(tmp(1))
  
  //     force_window.visible = "off"       
         delete(force_window)
@@ -63,7 +73,7 @@ function inverse_kinetic()
         
         // INVERSE KINETICS
         
-        liftOff = size(foot.x, 1)
+//        liftOff = size(foot.x, 1)
         contactLength = liftOff - initialContact
         
         // Slice data that is needed for inverse kinetics to frames with ground contact
