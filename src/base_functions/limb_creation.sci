@@ -56,8 +56,15 @@ for i = 1 : numberOfTracks
 end
 
 
+
 endfunction
 
+function calcHeel(distance, alpha)
+    ang_gamma = 90 - alpha;
+    span_distance = mean(GetLimbLength(ankle, toes));
+    h = sin(ang_gamma) * span_distance;
+    
+endfunction
 
 
 function  [foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = createLimbs(toes, ankle, knee, hip, shoulder, elbow, hand, neck)

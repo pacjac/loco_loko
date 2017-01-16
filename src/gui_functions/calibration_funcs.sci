@@ -5,8 +5,18 @@ function calibrate()
     // Make calibration results global
     global voltageToForce scaleDrift;
     
+    
+    
+    
     sca(axes_frame)
     caldir = uigetdir(cwd + "../data/", "Select Calibration Directory")
+    
+    interaction1 = messagebox("Das braucht jetzt einen Moment", "modal", "info", ["Alles klar!" "Wessen Schuld ist das?"])
+    if interaction1 == 1 then
+        messagebox("Coole Socke!");
+    elseif interaction1 == 2 then 
+        messagebox("Deine");
+    end
     
     driftfile = caldir + '/Waagendrift_clean.txt';
     offsetDataRaw = readScaleFile(driftfile);
@@ -27,6 +37,8 @@ function calibrate()
     clear_plot(axes_frame)
     plot2d(xCal(:,2), style = [color("blue")]);
     legend("xCalibration")
+    
+    messagebox(["Wir brauchen 8 Klicks!" "Je zwei klicks bestimmen die Range," "für die ein Kraftwert gemittelt wird"])
     
     // Get boundaries for each weight
     tmpLocation = locate(8)
@@ -55,6 +67,9 @@ function calibrate()
     tmpLocation = int(tmpLocation)
     zLimits = tmpLocation(1,:)
     
+    clear_plot(axes_frame)
+    
+    
     kg = [0, 1, 3.6, 7.75];  //kalibrationsgewichte
    
     
@@ -81,6 +96,8 @@ function calibrate()
     // Save calibration for later use
     fprintfMat(caldir + '/voltagetoforce.txt', [voltageToForce]) 
     fprintfMat(caldir + '/drift.txt', [scaleDrift])
+    
+    messagebox(["Kalibration abgeschlossen," "Daten gespeichert!" "in " + caldir])
     
 endfunction
 
