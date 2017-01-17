@@ -26,11 +26,12 @@ endfunction
 
 function inverse_kinetic()
     
-    global body
+    global body 
     global forces
     global g
     global axes_frame
     global results_figure
+    global enable_help
     
     
     for i = 1 : size(forces, 1)
@@ -40,40 +41,56 @@ function inverse_kinetic()
         grfBalance = forces(i)
         // Determine initial Contact from force Data
         force_window = scf(100)
+        force_axes = force_window.children
         
-        messagebox(["Synchronisation:" "Klicke auf den Fuß" "des ersten Kraftpeaks"])
+        if enable_help == %t then
+            messagebox(["Synchronisation:" "Klicke auf den Fuß" "des ersten Kraftpeaks"])
+        end
+        
         plot2d(grfBalance.Fz)
         forceStart = locate(1)
         startBalance = int(forceStart(1))
+        force_axes.title.text = "Waagenkraft senkrecht"
         
         // Determine initial Contact from Kinematic Data
         delete(gca())
         plot2d(ankle.y)
-        messagebox(["Synchronisation:" "Klicke auf initialen minimalen" "y-Wert der Hacke"])
+        force_axes = gca()
+        force_axes.title.text = "Knöchel, Y-Koordinate bei v = " + body(i).name 
+        
+        if enable_help == %t then
+            messagebox(["Synchronisation:" "Klicke auf initialen minimalen" "y-Wert der Hacke"])
+        end
+        
         startContact = locate(1)
         initialContact = floor(startContact(1))
         
         delete(gca())
         plot2d(toes.y)
-        messagebox(["Synchronisation:" "Klicke auf letzten minimalen" "y-Wert der Zehen"])
+        force_axes = gca()
+        force_axes.title.text = "Zehen, Y-Koordinate bei v = " + body(i).name
+        
+        if enable_help == %t then
+            messagebox(["Synchronisation:" "Klicke auf letzten minimalen" "y-Wert der Zehen"])
+        end
+        
         tmp = locate(1)
         liftOff = ceil(tmp(1))
- 
- //     force_window.visible = "off"       
+     
         delete(force_window)
         
-       
+        center_of_balance = getCobValues()
+        
         
         // Create Ground reaction force object
         grf.Fx = grfBalance.Fy(startBalance:2:$)
         grf.Fy = grfBalance.Fz(startBalance:2:$)
         grf.x = grfBalance.CoF_y(startBalance:2:$)
-        grf.y = 1.5
+        grf.y = center_of_balance.y
         
         
         // INVERSE KINETICS
         
-//        liftOff = size(foot.x, 1)
         contactLength = liftOff - initialContact
         
         // Slice data that is needed for inverse kinetics to frames with ground contact
@@ -150,8 +167,10 @@ function inverse_kinetic()
         clear_plot(axes_results)
         
         setAxes(gca(), "Belastungsdauer", 5, "Kraft [N]", 5);
-        plot2d(time, [ankle.Fy, knee.Fy, hip.Fy],... 
-                style = [color("red"), color("green"), color("blue")])
+        plot(time, ankle.Fy, 'r')
+        plot(time, knee.Fy, 'b')
+        plot(time, hip.Fy, 'g')
+          
         legend("Knöchel", "Knie", "Hüfte")
         
         results_figure.visible = "on"

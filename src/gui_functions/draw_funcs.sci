@@ -193,4 +193,23 @@ function plot_arm_schwung()
 endfunction
 
 
-
+function plot_forces_limb(limb_name)
+    global body forces;
+    global results_figure;
+    
+    styles = [-1, -2, -3]
+    
+    sca(axes_results)
+    clear_plot(axes_results)
+    
+    
+    execstr("limb = body(1)." + limb_name)        
+    time = linspace(0, 1, length(limb.Fx))
+    plot(time, limb.Fx, 'r')
+    plot(time , limb.Fy, 'b')
+    plot(time, limb.M, 'g')
+    name = body(1).name + " " + limb_name
+    legend(name + " Fx", name + " Fy", name + " M")
+        
+    results_figure.visible = "on";
+endfunction

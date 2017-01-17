@@ -88,6 +88,7 @@ function calc_pendulum()
     global savedir
     global body
     
+    names = []
     idealpendulum = []
     cycleTime = []
     frequency = []
@@ -99,13 +100,14 @@ function calc_pendulum()
     
         timesteps = size(ankle.x, 1)
         
-        Cycle_T = timesteps * DELTA_T
-        Pendulum_T = 2 * PI * sqrt(mean(GetLimbLength(leg_total, hip)) / 9.81)
+        Cycle_T = timesteps * DELTA_T * (1 - calcDutyFactor(body(i), 0.05)) * 2
+        Pendulum_T = 2 * %pi * sqrt(mean(GetLimbLength(leg_total, hip)) / 9.81)
     
-        idealpendulum(i) = Pendulum_T
-        cycleTime(i) = Cycle_T
-        frequency(i) = 1 / Cycle_T
-        difference(i) = Pendulum_T / Cycle_T * 100 - 100
+        names(i)            = body(i).name
+        idealpendulum(i)    = Pendulum_T
+        cycleTime(i)        = Cycle_T
+        frequency(i)        = 1 / Cycle_T
+        difference(i)       = Pendulum_T / Cycle_T * 100 - 100
     end
     
     fprintfMat(savedir + "/pendulum.txt",...
@@ -115,3 +117,69 @@ function calc_pendulum()
 
 endfunction
 
+
+function [dutyFactor] = calcDutyFactor(body, tolerance)
+    ankle = body.ankle
+    toes = body.toes
+    
+    threshold_ankle = min(ankle.y) + tolerance;
+    threshold_toes = min(toes.y) + tolerance;
+    
+    all_img = size(ankle.y, 1)
+    
+    initialContactFound = %f
+    liftOffFound = %f
+    nextContactFound = %f
+    for i = 1 : all_img
+        if ankle.y(i) < threshold_ankle & initialContactFound == %f then
+            initialContact = i
+            initialContactFound = %t
+        elseif toes.y(i) > threshold_toes & initialContactFound == %t & liftOffFound == %f then
+            liftOff = i
+            liftOffFound = %t
+        elseif ankle.y(i) < threshold_ankle & initialContactFound == %t & liftOffFound == %t then
+            nextContact = i
+            nextContactFound = %t;
+        end
+    end
+    
+    if initialContactFound == %f then
+        initialContact = 0
+    end
+    
+    if liftOffFound == %f then
+        liftOff = size(ankle.y, 1)
+    end
+    
+    if nextContactFound == %f then
+        nextContact = size(ankle.y, 1)
+    end
+    
+    contactDuration = liftOff - initialContact
+    cycleDuration = nextContact - initialContact
+    dutyFactor = contactDuration / cycleDuration
+    
+    // If function does not return what I want, decrese tolerance
+    if dutyFactor > 0.9 then
+        dutyFactor = calcDutyFactor(body, tolerance - 0.01)
+    end
+    
+endfunction
+
+function writeDutyFactor()
+    global body
+    global savedir
+    
+    if savedir == [] then
+        messagebox("Zuerst Ergebnisordner bestimmen!")
+    else
+        for i = 1 : size(body, 1)
+            df(i) = calcDutyFactor(body(i), 0.05)
+            names(i) = body(i).name
+        end
+        
+        fprintfMat(savedir + "/dutyfactor.txt",...
+                df);
+        
+    end
+endfunction
