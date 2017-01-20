@@ -52,6 +52,9 @@ for i = 1 : numberOfTracks
     elseif i == 8 then
         neck.x = data(numberOfImages*(i - 1) + 1:i*numberOfImages , 3);
         neck.y = data(numberOfImages*(i - 1) + 1:i*numberOfImages , 4) * (-1) + Y_OFFSET;
+    elseif i == 9 then
+        heel.x = data(numberOfImages*(i - 1) + 1:i*numberOfImages , 3);
+        heel.y = data(numberOfImages*(i - 1) + 1:i*numberOfImages , 4) * (-1) + Y_OFFSET;
     end
 end
 

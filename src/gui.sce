@@ -10,7 +10,7 @@ global frame_w frame_h plot_w plot_h;
 //global toes ankle knee hip shoulder elbow hand neck;
 //global foot leg  thigh  leg_total  upperarm  forearm  arm_total  trunk;
 global forces body;
-global proband_mass;
+global proband_mass pix_to_m;
 global DELTA_T g;
 DELTA_T = 0.02; g = -9.81
 
@@ -149,7 +149,7 @@ kinematik_handle = uimenu(main_handle,...
     "label"                 ,gettext("Kinematik"));    
 imgseq_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Bildsequenz laden"),...
-    "callback"              ,"load_image_data(strtod(conversion_value.string))");
+    "callback"              ,"load_image_data()");
 pendulum_handle = uimenu(kinematik_handle,...
     "label"                 ,gettext("Pendel berechnen"),...
     "callback"              ,"calc_pendulum()");  
@@ -240,7 +240,7 @@ cob_text = uicontrol(main_handle,...
     
 cob_value = uicontrol(main_handle,...
     "style"                  ,"edit",...
-    "string"                ,"1.878, 0.145",...
+    "string"                ,"1.878, 0.13",...
     "position"              ,[140, offset - 90, 90, 20]);
     
 // SAVE FIGURE
@@ -277,13 +277,74 @@ rescale_button = uicontrol(main_handle,...
    
 
 
+function strideLength()
+    global body;
+    global savedir;
+    
+    if savedir == [] then
+        messagebox("Wir brauchen einen Ergebnisordner!");
+    else
+        for i = 1 : size(body, 1)
+            xmin = min(body(i).toes.x)
+            xmax = max(body(i).toes.x)
+            strideLength(i) = xmax - xmin
+        end
+        
+        fprintfMat(savedir + "/stridelength.txt",...
+                strideLength);
+    end
+    
+endfunction
 
+function stride = getstrideLength()
+    global body;
+    
+    
+    for i = 1 : size(body, 1)
+        xmin = min(body(i).toes.x)
+        xmax = max(body(i).toes.x)
+        stride(i) = xmax - xmin
+    end
+    
+endfunction
 
+function proband_mass = getProbandMass()
+    global proband_mass
+    proband_mass = strtod(mass_entry.string)
+endfunction
 
+function pix_to_m = getPixToM()
+    global pix_to_m
+    pix_to_m = strtod(conversion_value.string)
+endfunction
 
+function plotFrequencyduo()
 
+    frequency = [0.47, 0.66, 0.72, 0.86, 0.9, 1.02, 1.04]
+    
+    sl = [ 0.3703012, 0.4992139, 0.6884489, 0.7507958, 0.8522696, 0.8777071, 0.966458] 
+    
+    clf() 
+    
+    plot(speed, sl,"b") 
+    a=gca(); 
+    b = newaxes(); 
+    b.y_location = "right"; 
+    b.filled = "off"; 
+    b.axes_visible = ["off","on","on"]; 
+    b.axes_bounds = a.axes_bounds; 
+    b.font_size = a.font_size; 
+    plot(speed, frequency,"g") 
+    a.y_label.text = "Schrittweite [m]"
+    a.x_label.text = "Geschwindigkeit [km/h]"
+    b.y_label.text = "Schrittfrequenz [Hz]"
+endfunction
 
-
-
-
+function calcNeckSpeed()
+    global body;
+    for i = 1 : 3
+        speed = mean(body(i).neck.speed.x);
+        body(i).speed = speed;
+    end
+endfunction
 

@@ -66,6 +66,24 @@ function [weightedMovingMean] = WeightedMovingMean (values, weightA, weightB, we
     weightedMovingMean(endofdata) = values(endofdata);
 endfunction
 
+function [x_neu] = gewichteterMittelwert(x)
+    // x = Liste von Werten
+    // i = Index der List
+    // Ende der Liste
+    listEnde = length(x)
+    // Gewichtungsfaktoren
+    a = 1;
+    b = 2;
+    c = 1;
+    
+    for i = 2 : listEnde - 1 
+        x_neu(i) = (a * x(i - 1) + b * x(i) + c * x(i +1) ) / (a + b + c)
+    end
+    
+    x_neu(1) = x(1)
+    x_neu(listEnde) = x(listEnde)
+endfunction
+
 function [weightedMovingMean] = WeightedMovingMean4 (values, weightA, weightB, weightC, weightD, weightE)
     weightedMovingMean(1) = values(1);
     weightedMovingMean(2) = values(2);

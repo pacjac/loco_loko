@@ -1,13 +1,19 @@
-function load_image_data(pix_to_m)
+function load_image_data()
     // Set result global
     global body
+    
+    proband_mass = getProbandMass();
+    pix_to_m = getPixToM()
+    
+    disp(pix_to_m)
+    disp(proband_mass)
     
     imgfiles = uigetfile(["*.mdf", "Output from ImageJ"], cwd + "/../data/Laufen/felix/","Select CSV data",%t);
     
     for i = 1 : size(imgfiles, 2)
         
         // Read mass data from field
-        getProbandMass();
+        
     
         [toes, ankle, knee, hip, shoulder, elbow, hand, neck] = readFromMDF(imgfiles(i), pix_to_m)
         
@@ -162,6 +168,8 @@ function [dutyFactor] = calcDutyFactor(body, tolerance)
     // If function does not return what I want, decrese tolerance
     if dutyFactor > 0.9 then
         dutyFactor = calcDutyFactor(body, tolerance - 0.01)
+    elseif dutyFactor < 0.3 then
+        dutyFactor = calcDutyFactor(body, tolerance + 0.01)
     end
     
 endfunction

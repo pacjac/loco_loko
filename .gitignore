@@ -1,2 +1,7 @@
 src/guiTest.sce
+report/
+doc/
+markdown/
+data
+results
 *.png

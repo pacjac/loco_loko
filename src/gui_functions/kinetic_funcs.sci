@@ -85,7 +85,7 @@ function inverse_kinetic()
         // Create Ground reaction force object
         grf.Fx = grfBalance.Fy(startBalance:2:$)
         grf.Fy = grfBalance.Fz(startBalance:2:$)
-        grf.x = grfBalance.CoF_y(startBalance:2:$)
+        grf.x = grfBalance.CoF_y(startBalance:2:$)  // Change in Coordinate System!
         grf.y = center_of_balance.y
         
         

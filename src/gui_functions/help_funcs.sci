@@ -30,10 +30,7 @@ function set_result_dir(cwd)
     savedir = uigetdir(cwd + "../results/")
 endfunction 
 
-function getProbandMass()
-    global proband_mass
-    proband_mass = strtod(mass_entry.string)
-endfunction
+
 
 function toggle_help()
     global enable_help;

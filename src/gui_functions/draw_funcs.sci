@@ -39,7 +39,7 @@ function clear_plot(axes)
     end
 endfunction
 
-function drawallthesticks(speed)
+function drawallthesticks(body, speed)
     global axes_results results_figure
     
     sca(axes_results);
@@ -48,7 +48,7 @@ function drawallthesticks(speed)
     // Calculate offset for Conveyor belt
     offset = speed / 3.6 * 0.02;
     
-    [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body(1))
+    [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body)
 
     num_of_images = size(toes.x,1)
     snapshots = 20
@@ -84,6 +84,8 @@ function plot_forces()
     
     colors = [color("red"), color("blue"), color("green")];
     
+    dutyfactor = [0.76, 0.64, 0.53]
+    
     // Work on main frame
     sca(axes_frame)
     clear_plot(axes_frame)
@@ -106,7 +108,8 @@ function plot_forces()
         
         
         // Create Plot variables
-        time = linspace(0, 1, end_plot - begin_plot + 1)
+//        time = linspace(0, 1, end_plot - begin_plot + 1)
+        time = linspace(0, dutyfactor(i), end_plot - begin_plot + 1)
         cutforces = force.Fz(begin_plot:end_plot, 1)
         
         // Change to results frame
