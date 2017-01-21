@@ -209,7 +209,7 @@ function plot_forces_limb(limb_name)
     plot(time , limb.Fy, 'b')
     plot(time, limb.M, 'g')
     name = body(1).name + " " + limb_name
-    legend(name + " Fx", name + " Fy", name + " M")
+    legend(name + " Fx", name + " Fy", name + " M", 4)
         
     results_figure.visible = "on";
 endfunction

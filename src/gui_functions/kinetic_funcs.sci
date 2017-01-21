@@ -7,7 +7,7 @@ function calc_forces()
    
     for i = 1 : size(forcefile, 2)
         forceRaw = readScaleFile(forcefile(i));
-        force_sum = combineChannels(forceRaw, 2.5)
+        force_sum = combineChannels(forceRaw)
         force_smooth = calculateForces(force_sum, scaleDrift, voltageToForce)
         forces(i) = force_smooth 
         tmp = tokens(forcefile(i), ['/','.'])
@@ -85,7 +85,7 @@ function inverse_kinetic()
         // Create Ground reaction force object
         grf.Fx = grfBalance.Fy(startBalance:2:$)
         grf.Fy = grfBalance.Fz(startBalance:2:$)
-        grf.x = grfBalance.CoF_y(startBalance:2:$)
+        grf.x = grfBalance.CoF_y(startBalance:2:$) + center_of_balance.x
         grf.y = center_of_balance.y
         
         
@@ -121,26 +121,31 @@ function inverse_kinetic()
         
         // Iterate over ground contact duration
         for j = 1 : contactLength
+            // Waagewerte Fy positiv, wenn positive Belastung
+            // Waagenwerte Fx negativ, wenn Bremsen --> Umdrehen
             grf.Fx(j) = - grf.Fx(j)
             
             // Kräfte beim Einlesen umschreiben um Koordinatensystem anzupassen!
             
             // Calculate Joint forces and moments
             ankle.Fx(j) = foot.mass * foot.acc.x(j) - grf.Fx(j)
-            ankle.Fy(j) = foot.mass * (foot.acc.y(j) + g) + grf.Fy(j)
-            ankle.M(j) = foot.MoI * foot.angacc(j) - ankle.Fy(j) * (ankle.x(j) - foot.x(j)) ...
-                      - ankle.Fx(j) * (foot.y(j) - ankle.y(j)) - grf.Fx(j) * ( foot.y(j) - grf.y ) - grf.Fy(j) * (grf.x(j) - foot.x(j))
+            ankle.Fy(j) = foot.mass * (foot.acc.y(j) - g) - grf.Fy(j)
+            ankle.M(j) = foot.MoI * foot.angacc(j)...
+                      - ankle.Fy(j) * (ankle.x(j) - foot.x(j)) - ankle.Fx(j) * (foot.y(j) - ankle.y(j))...
+                      - grf.Fx(j) * ( foot.y(j) - grf.y ) - grf.Fy(j) * (grf.x(j) - foot.x(j))
                       
             //knee.Fx(j) = leg.mass * leg.acc.x(j) - ankle.Fx(j) * (-1)
             knee.Fx(j) = leg.mass * leg.acc.x(j) - ankle.Fx(j) * (-1)
-            knee.Fy(j) = leg.mass * (leg.acc.y(j) + g) + ankle.Fy(j)
-            knee.M(j) = ankle.M(j) + leg.MoI * leg.angacc(j) - knee.Fy(j) * (knee.x(j) - leg.x(j))...
-                     - knee.Fx(j) * (leg.y(j) - knee.y(j)) + ankle.Fx(j) * (leg.y(j) - ankle.y(j)) + ankle.Fy(j) * (ankle.x(j) - leg.y(j))
+            knee.Fy(j) = leg.mass * (leg.acc.y(j) - g) - ankle.Fy(j) * (-1)
+            knee.M(j) = leg.MoI * leg.angacc(j) - ankle.M(j) * (-1)...
+                     - knee.Fy(j) * (knee.x(j) - leg.x(j)) - knee.Fx(j) * (leg.y(j) - knee.y(j))...
+                     - ankle.Fx(j) * (-1) * (leg.y(j) - ankle.y(j)) - ankle.Fy(j) * (-1) * (ankle.x(j) - leg.x(j))
                      
-            hip.Fx(j) = thigh.mass * thigh.acc.x(j) + knee.Fx(j)
-            hip.Fy(j) = thigh.mass * (thigh.acc.y(j) + g) + knee.Fy(j)
-            hip.M(j) = knee.M(j) + thigh.MoI * thigh.angacc(j) - hip.Fy(j) * (hip.x(j) - thigh.x(j))...
-                     - hip.Fx(j) * (thigh.y(j) - hip.y(j)) + knee.Fx(j) * (thigh.y(j) - knee.y(j)) + knee.Fy(j) * (knee.x(j) - thigh.y(j))
+            hip.Fx(j) = thigh.mass * thigh.acc.x(j) - knee.Fx(j) * (-1)
+            hip.Fy(j) = thigh.mass * (thigh.acc.y(j) - g) - knee.Fy(j) * (-1)
+            hip.M(j) = thigh.MoI * thigh.angacc(j) - knee.M(j) * (-1)...
+                     - hip.Fy(j) * (hip.x(j) - thigh.x(j)) - hip.Fx(j) * (thigh.y(j) - hip.y(j))...
+                     - knee.Fx(j) * (-1) * (thigh.y(j) - knee.y(j)) - knee.Fy(j) * (-1) * (knee.x(j) - thigh.x(j))
                  
          end
          

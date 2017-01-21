@@ -7,7 +7,7 @@ function [forcesRaw] = readScaleFile (filepath)
     forcesRaw = data(index:$,: )
 endfunction
 
-function [forces] = combineChannels (data, CoBx)
+function [forces] = combineChannels (data)
     b = 0.0575
     for i = 1 : size(data, 1)
     
@@ -17,7 +17,7 @@ function [forces] = combineChannels (data, CoBx)
     forces(i,3) = data(i,4) + data(i,5);  
     // Z channels // Parallel Gravitation
     forces(i,4) = data(i,6) + data(i,7) + data(i,8) + data(i,9);
-    forces(i,5) = ( ( data(i,6) + data(i,7)) / ( data(i,6) + data(i,7) + data(i,8) + data(i,9) ) )*2*b - b + CoBx
+    forces(i,5) = ( ( data(i,6) + data(i,7)) / ( data(i,6) + data(i,7) + data(i,8) + data(i,9) ) )*2*b - b
     end
 endfunction
 
