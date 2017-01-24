@@ -1,4 +1,7 @@
 src/guiTest.sce
+report/
+results/
+data/
 *.png
 *.aux
 *.log
