@@ -19,4 +19,7 @@
 \contentsline {subsubsection}{\numberline {3.2.2}Inverse Dynamik}{9}{subsubsection.3.2.2}
 \contentsline {subsection}{\numberline {3.3}Vergleich Laufband und Laufstrecke}{11}{subsection.3.3}
 \contentsline {section}{\numberline {4}Diskussion}{13}{section.4}
-\contentsline {section}{\numberline {5}Literatur}{15}{section.5}
+\contentsline {subsection}{\numberline {4.1}Durchgef\IeC {\"u}hrte Experimente}{13}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}Bodenreaktionskr\IeC {\"a}fte}{13}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}Vergleich Laufband}{13}{subsection.4.3}
+\contentsline {section}{\numberline {5}Literatur}{16}{section.5}

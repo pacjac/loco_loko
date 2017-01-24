@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.1.16)  24 JAN 2017 11:58
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.1.16)  24 JAN 2017 19:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1550,7 +1550,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 1.
 
-<bilder/Einleitung/Skizze_Gangphasen_small.png, id=121, 722.7pt x 169.3527pt>
+<bilder/Einleitung/Skizze_Gangphasen_small.png, id=136, 722.7pt x 169.3527pt>
 File: bilder/Einleitung/Skizze_Gangphasen_small.png Graphic file (type png)
 
 <use bilder/Einleitung/Skizze_Gangphasen_small.png>
@@ -1577,7 +1577,7 @@ File: omslmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10.95> not available
 (Font)              Font shape `OMS/lmsy/m/n' tried instead on input line 21.
 
-<bilder/Einleitung/lauf_experimente.jpg, id=129, 1240.635pt x 471.7625pt>
+<bilder/Einleitung/lauf_experimente.jpg, id=144, 1240.635pt x 471.7625pt>
 File: bilder/Einleitung/lauf_experimente.jpg Graphic file (type jpg)
 
 <use bilder/Einleitung/lauf_experimente.jpg>
@@ -1606,7 +1606,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 11.
 
-<bilder/mat_met/Laufband_setup.png, id=136, 1682.285pt x 1378.14874pt>
+<bilder/mat_met/Laufband_setup.png, id=151, 1682.285pt x 1378.14874pt>
 File: bilder/mat_met/Laufband_setup.png Graphic file (type png)
 
 <use bilder/mat_met/Laufband_setup.png>
@@ -1638,7 +1638,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 24.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 24.
-<bilder/mat_met/Laufstrecke_setup.png, id=138, 4426.5375pt x 2175.12625pt>
+<bilder/mat_met/Laufstrecke_setup.png, id=153, 4426.5375pt x 2175.12625pt>
 File: bilder/mat_met/Laufstrecke_setup.png Graphic file (type png)
 
 <use bilder/mat_met/Laufstrecke_setup.png>
@@ -1751,7 +1751,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 56--58
 
  []
 
-<bilder/ergebnisse/Forces_df_plusbw.pdf, id=178, 1672.2475pt x 681.54625pt>
+<bilder/ergebnisse/Forces_df_plusbw.pdf, id=193, 1672.2475pt x 681.54625pt>
 File: bilder/ergebnisse/Forces_df_plusbw.pdf Graphic file (type pdf)
 
 <use bilder/ergebnisse/Forces_df_plusbw.pdf>
@@ -1773,7 +1773,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 69.
 
-<bilder/ergebnisse/forces_knee.pdf, id=187, 1212.53pt x 825.0825pt>
+<bilder/ergebnisse/forces_knee.pdf, id=202, 1212.53pt x 825.0825pt>
 File: bilder/ergebnisse/forces_knee.pdf Graphic file (type pdf)
 
 <use bilder/ergebnisse/forces_knee.pdf>
@@ -1781,7 +1781,7 @@ Package pdftex.def Info: bilder/ergebnisse/forces_knee.pdf used on input line 7
 5.
 (pdftex.def)             Requested size: 318.66948pt x 216.84549pt.
 
-<bilder/ergebnisse/ankle_fx_plot.pdf, id=189, 1212.53pt x 825.0825pt>
+<bilder/ergebnisse/ankle_fx_plot.pdf, id=204, 1212.53pt x 825.0825pt>
 File: bilder/ergebnisse/ankle_fx_plot.pdf Graphic file (type pdf)
 
 <use bilder/ergebnisse/ankle_fx_plot.pdf>
@@ -1793,7 +1793,7 @@ Package babel Info: Redefining ngerman shorthand "|
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 88.
  [9 <./bilder/ergebnisse/forces_knee.pdf>] <bilder/ergebnisse/momente_knie.pdf,
- id=198, 1212.53pt x 825.0825pt>
+ id=213, 1212.53pt x 825.0825pt>
 File: bilder/ergebnisse/momente_knie.pdf Graphic file (type pdf)
 
 <use bilder/ergebnisse/momente_knie.pdf>
@@ -1810,7 +1810,7 @@ Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 105.
  [10 <./bilder/ergebnisse/ankle_fx_plot.pdf> <./bilder/ergebnisse/momente_knie.
 pdf>]
-<bilder/ergebnisse/armschwung_winkel.pdf, id=206, 1505.625pt x 636.3775pt>
+<bilder/ergebnisse/armschwung_winkel.pdf, id=221, 1505.625pt x 636.3775pt>
 File: bilder/ergebnisse/armschwung_winkel.pdf Graphic file (type pdf)
 
 <use bilder/ergebnisse/armschwung_winkel.pdf>
@@ -1818,7 +1818,7 @@ Package pdftex.def Info: bilder/ergebnisse/armschwung_winkel.pdf used on input
 line 111.
 (pdftex.def)             Requested size: 455.24411pt x 192.41982pt.
 
-<bilder/ergebnisse/back_angle.pdf, id=208, 1003.75pt x 461.725pt>
+<bilder/ergebnisse/back_angle.pdf, id=223, 1003.75pt x 461.725pt>
 File: bilder/ergebnisse/back_angle.pdf Graphic file (type pdf)
 
 <use bilder/ergebnisse/back_angle.pdf>
@@ -1847,20 +1847,39 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 1.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 1.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 2.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 2.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 8.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 8.
 
-Underfull \hbox (badness 10000) in paragraph at lines 2--6
+<bilder/Ergebnisse/brk_annotations.pdf, id=235, 1003.75pt x 461.725pt>
+File: bilder/Ergebnisse/brk_annotations.pdf Graphic file (type pdf)
 
- []
+<use bilder/Ergebnisse/brk_annotations.pdf>
+Package pdftex.def Info: bilder/Ergebnisse/brk_annotations.pdf used on input li
+ne 10.
+(pdftex.def)             Requested size: 455.24411pt x 209.4159pt.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 17.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 17.
+Package babel Info: Redefining ngerman shorthand "|
+(babel)             in language  on input line 21.
+Package babel Info: Redefining ngerman shorthand "~
+(babel)             in language  on input line 21.
+ [13
 
-)
+
+ <./bilder/Ergebnisse/brk_annotations.pdf>])
 Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 91.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 91.
- [13
-
-
-]
+ [14]
 \openout2 = `inhalt/FazitAusblick.aux'.
 
  (./inhalt/FazitAusblick.tex)
@@ -1868,7 +1887,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 92.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 92.
- [14
+ [15
 
 
 ]
@@ -1885,7 +1904,7 @@ Package babel Info: Redefining ngerman shorthand "|
 (babel)             in language  on input line 108.
 Package babel Info: Redefining ngerman shorthand "~
 (babel)             in language  on input line 108.
-[15
+[16
 
 ]
 \openout2 = `inhalt/Anhang.aux'.
@@ -1911,7 +1930,7 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 109.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 109.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 109.
 Package rerunfilecheck Info: File `Praeambel.out' has not changed.
-(rerunfilecheck)             Checksum: EC49887A70D92E54FA53625B502535DF;1316.
+(rerunfilecheck)             Checksum: C6A1338CA67B004C849DE88014D6B2EA;1535.
 
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
@@ -1919,10 +1938,10 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 109.
  ) 
 Here is how much of TeX's memory you used:
- 23305 strings out of 493014
- 426503 string characters out of 6133351
- 596372 words of memory out of 5000000
- 26239 multiletter control sequences out of 15000+600000
+ 23319 strings out of 493014
+ 426823 string characters out of 6133351
+ 596427 words of memory out of 5000000
+ 26247 multiletter control sequences out of 15000+600000
  84946 words of font info for 55 fonts, out of 8000000 for 9000
  1144 hyphenation exceptions out of 8191
  73i,11n,66p,8522b,450s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1941,10 +1960,10 @@ public/lm/lmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/lm/l
 mr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/lm/lmssbx10.pfb>
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/loca
 l/texlive/2016/texmf-dist/fonts/type1/public/lm/lmsy8.pfb>
-Output written on Praeambel.pdf (18 pages, 1325285 bytes).
+Output written on Praeambel.pdf (19 pages, 1354052 bytes).
 PDF statistics:
- 294 PDF objects out of 1000 (max. 8388607)
- 246 compressed objects within 3 object streams
- 44 named destinations out of 1000 (max. 500000)
- 223 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 316 PDF objects out of 1000 (max. 8388607)
+ 266 compressed objects within 3 object streams
+ 48 named destinations out of 1000 (max. 500000)
+ 252 words of extra memory for PDF output out of 10000 (max. 10000000)
 
