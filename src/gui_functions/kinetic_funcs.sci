@@ -17,12 +17,6 @@ function calc_forces()
     //forces = force_smooth(1)
 endfunction
 
-function [force] = load_forces(path)
-    forceRaw = readScaleFile(path);
-    force_sum = combineChannels(forceRaw, 2.5)
-    force = calculateForces(force_sum, scaleDrift, voltageToForce)
-endfunction
-
 
 function inverse_kinetic()
     
