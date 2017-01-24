@@ -39,16 +39,17 @@ function clear_plot(axes)
     end
 endfunction
 
-function drawallthesticks(speed)
+function drawallthesticks(body, speed)
     global axes_results results_figure
     
     sca(axes_results);
     clear_plot(axes_results);
     
     // Calculate offset for Conveyor belt
+    // deltaX = v [kmh] / 3.6 * deltaT
     offset = speed / 3.6 * 0.02;
     
-    [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body(1))
+    [toes, ankle, knee, hip, shoulder, elbow, hand, neck, foot, leg, thigh, leg_total, upperarm, forearm, arm_total, trunk] = setCurrentBody(body)
 
     num_of_images = size(toes.x,1)
     snapshots = 20
@@ -80,7 +81,7 @@ function plot_forces()
     // figures to work with
     global results_figure axes_frame;
     // data to work with 
-    global forces;
+    global forces forcefile;
     
     colors = [color("red"), color("blue"), color("green")];
     
@@ -113,8 +114,7 @@ function plot_forces()
         scf(results_figure)
         sca(axes_results)
         
-        tmp = tokens(forcefile(i), ['/','.'])
-        leg(i) = tmp($ - 1)
+        leg(i) = forces(i).name
         
         // Plot result = cut force
         plot2d(time, cutforces, style = [colors(i)])
@@ -177,8 +177,8 @@ function plot_arm_schwung()
     clear_plot(axes_results)
     
     for i = 1 : size(body, 1)
-        rel_hand.x = body(i).hand.x - body(i).shoulder.x
-        rel_hand.y = body(i).hand.y - body(i).shoulder.y
+        rel_hand.x = body(i).hand.x - body(i).neck.x
+        rel_hand.y = body(i).hand.y - body(i).neck.y
         
         plot(rel_hand.x, rel_hand.y, styles(i))
         leg(i) = body(i).name
@@ -186,6 +186,31 @@ function plot_arm_schwung()
     
     
     setAxes(axes_results, "X", 5, "Y", 5)
+     
+    legend(leg)
+    
+    results_figure.visible = "on"
+endfunction
+
+
+function plot_armAmplitude()
+    global body;
+    global axes_frame results_figure axes_results;
+    
+    styles = [':r', 'xg', ':b', '--k', '-.m', ':c', '--b'];
+    
+    sca(axes_results);
+    clear_plot(axes_results);
+    
+    for i = 1 : size(body, 1)
+        time = linspace(0, 1, size(body(i).arm_total.angle, 1));  
+        angle = (body(i).arm_total.angle * 180 / %pi - 90) * (-1)      
+        plot(time, angle, styles(i))
+        leg(i) = body(i).name
+    end
+    
+    
+    setAxes(axes_results, "Schrittzyklus", 5, "Winkel des Armes", 5)
      
     legend(leg)
     
@@ -203,13 +228,110 @@ function plot_forces_limb(limb_name)
     clear_plot(axes_results)
     
     
-    execstr("limb = body(1)." + limb_name)        
-    time = linspace(0, 1, length(limb.Fx))
-    plot(time, limb.Fx, 'r')
-    plot(time , limb.Fy, 'b')
-    plot(time, limb.M, 'g')
-    name = body(1).name + " " + limb_name
+    execstr("limb = body(1)." + limb_name);       
+    time = linspace(0, 1, length(limb.Fx));
+    plot(time, limb.Fx, 'r');
+    plot(time , limb.Fy, 'b');
+    plot(time, limb.M, 'g');
+    name = body(1).name + " " + limb_name;
     legend(name + " Fx", name + " Fy", name + " M", 4)
         
     results_figure.visible = "on";
+endfunction
+
+function changeLineThickness(axes, thickness)
+    L = size(axes.children, 1)
+    for i = 1 : L
+        if axes.children(i).type == "Compound" then
+            disp("Cleaning " + axes.children(i).type);
+            axes.children(i).children.thickness = thickness;
+            axes.children(i).children.line_mode = "on";
+            axes.children(i).children.line_style = 1;
+            axes.children(i).children.mark_mode = "off";   
+        end 
+    end
+endfunction
+
+function setFancyLegend()
+legend("$\mathrm{Laufband\: 2\: km\cdot{h}}^{-1}$",...
+       "$\mathrm{Laufband\: 4\:km\cdot{h}}^{-1}$",... 
+       "$\mathrm{Laufband\: 7\: km\cdot{h}}^{-1}$",...
+       "$\mathrm{Laufstrecke\: 1,6\: km\cdot{h}}^{-1}$",...
+       "$\mathrm{Laufstrecke\: 4,5\: km\cdot{h}}^{-1}$",...
+       "$\mathrm{Laufstrecke\: 8,6\: km\cdot{h}}^{-1}$",...
+       5) 
+endfunction
+
+function changeColors(axes)
+    L = size(axes.children, 1)
+    colors = [color("scilabred4"), color("scilabred2"), color("darkorange"),  color("blue"), color("lightblue"), color("cyan")]
+    for i = 1 : L
+            if axes.children(i).type == "Compound" then
+            axes.children(i).children.line_mode = "on";
+            axes.children(i).children.line_style = 1;
+            axes.children(i).children.mark_mode = "off";
+            axes.children(i).children.foreground = colors(i - 1);
+            end
+    end
+endfunction
+
+function smoothLive(axes)
+    L = size(axes.children, 1)
+    for i = 1 : L
+        if axes.children(i).type == "Compound" then
+        axes.children(i).children.data(:,2) = MovingMean(axes.children(i).children.data(:,2));
+        end
+    end
+endfunction
+
+function [inverseVergleich] = inversePendulum()
+    global body;
+    schrittfrequenz = [ 0.47 , 0.66 , 0.72 , 0.86 , 0.90 , 1.02 , 1.04];
+    dutyFaktor = [0.78 , 0.71 , 0.68 , 0.66 , 0.60 , 0.59 , 0.58];
+    schrittdauer = schrittfrequenz.^(-1);
+    for i = 1 : 7
+        standdauer(i) = schrittdauer(i) * dutyFaktor(i);
+        T_stand(i) = 2 * standdauer(i);
+    end
+    for i = 1 : size(body, 1)
+        p_length = mean(GetLimbLength(body(i).foot, body(i).hip)) + 0.05;
+        disp(p_length);
+        T_inverse(i) = 2 * %pi * sqrt(p_length / 9.81)
+    end
+    
+    inverseVergleich.model = T_inverse;
+    inverseVergleich.proband = T_stand;
+endfunction
+
+function plotJointComparison(joint_name, force_name)
+    rgb = ['r','b','g'];
+    sca(axes_results);
+    clear_plot(axes_results);
+    
+    for i = 1 : size(body, 1)
+        execstr("force = body(i)." + joint_name + "." + force_name)
+        time = linspace(0, 1, size(force, 1));
+        plot(time, force, rgb(i))
+    end
+    
+    changeLineThickness(axes_results, 3);
+endfunction
+
+function twoClickDistance()
+    clicks = locate(2);
+    x1 = clicks(1,1);
+    y1 = clicks(2,1);
+    x2 = clicks(1,2);
+    y2 = clicks(2,2);
+    distance = sqrt((x2 - x1)**2 + (y2 - y1)**2);
+    disp(distance);
+endfunction
+
+function liveChangeYValues(axes, offset)
+    L = size(axes.children, 1)
+    for i = 1 : L
+            if axes.children(i).type == "Compound" then
+            axes.children(i).children.data(:,2) = axes.children(i).children.data(:,2) + offset
+            end
+    end
 endfunction
