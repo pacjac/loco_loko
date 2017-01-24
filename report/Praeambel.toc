@@ -1,0 +1,22 @@
+\select@language {ngerman}
+\select@language {ngerman}
+\contentsline {section}{\numberline {1}Einleitung}{1}{section.1}
+\contentsline {section}{\numberline {2}Material und Methoden}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}Proband}{3}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Laufband}{3}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Laufstrecke mit Kraftmessplatte}{3}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Datenauswertung}{4}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Datenstruktur}{5}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Numerische Verfahren}{5}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Anthropometrie}{5}{subsubsection.2.4.3}
+\contentsline {subsection}{\numberline {2.5}Auswertung Laufband}{6}{subsection.2.5}
+\contentsline {subsubsection}{\numberline {2.5.1}Inverse Dynamik}{6}{subsubsection.2.5.1}
+\contentsline {subsubsection}{\numberline {2.5.2}Vergleich Laufband - Laufstrecke}{6}{subsubsection.2.5.2}
+\contentsline {section}{\numberline {3}Ergebnisse}{7}{section.3}
+\contentsline {subsection}{\numberline {3.1}Laufband}{7}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Laufstrecke}{7}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Bodenreaktionskr\IeC {\"a}fte}{8}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Inverse Dynamik}{9}{subsubsection.3.2.2}
+\contentsline {subsection}{\numberline {3.3}Vergleich Laufband und Laufstrecke}{11}{subsection.3.3}
+\contentsline {section}{\numberline {4}Diskussion}{13}{section.4}
+\contentsline {section}{\numberline {5}Literatur}{15}{section.5}

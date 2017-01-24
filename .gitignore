@@ -1,5 +1,3 @@
 src/guiTest.sce
 *.png
-*.pdf
-/report
 /markdown
